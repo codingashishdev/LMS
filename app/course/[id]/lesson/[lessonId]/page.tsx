@@ -1,5 +1,6 @@
 import { LessonViewer } from "@/components/lesson-viewer"
-import { DashboardHeader } from "@/components/dashboard-header"
+// Header now handled globally by HeaderRouter
+// import { DashboardHeader } from "@/components/dashboard-header"
 
 // Mock lesson data
 const lessonData = {
@@ -102,7 +103,8 @@ export default function LessonPage({
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      {/* Header rendered by layout */}
+      {/* <DashboardHeader /> */}
       <LessonViewer lesson={lesson} />
     </div>
   )

@@ -1,5 +1,6 @@
 import { CourseDetail } from "@/components/course-detail"
-import { DashboardHeader } from "@/components/dashboard-header"
+// Header now handled globally by HeaderRouter
+// import { DashboardHeader } from "@/components/dashboard-header"
 
 // Mock course data - in a real app this would come from a database
 const courseData = {
@@ -77,7 +78,7 @@ export default function CoursePage({ params }: { params: { id: string } }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardHeader />
+      {/* <DashboardHeader /> */}
       <main className="container mx-auto px-4 py-8">
         <CourseDetail course={course} />
       </main>
