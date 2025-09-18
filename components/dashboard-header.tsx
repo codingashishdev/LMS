@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -10,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { Command } from "lucide-react"
 
 export function DashboardHeader() {
   return (
@@ -46,6 +49,21 @@ export function DashboardHeader() {
 
           <div className="flex items-center gap-2">
             <ThemeToggle />
+            <Button
+              variant="outline"
+              size="sm"
+              className="hidden md:inline-flex items-center gap-2"
+              onClick={() => {
+                // Trigger the command palette using the same global shortcut handler
+                const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+                const event = new KeyboardEvent("keydown", { key: isMac ? "k" : "k", ctrlKey: !isMac, metaKey: isMac })
+                window.dispatchEvent(event)
+              }}
+            >
+              <Command className="h-4 w-4" />
+              <span>Command Palette</span>
+              <kbd className="ml-1 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">{typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform) ? "⌘" : "Ctrl"}+K</kbd>
+            </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">

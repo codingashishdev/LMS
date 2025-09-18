@@ -143,55 +143,69 @@ export function ProgressDashboard() {
   const earnedAchievements = achievements.filter((achievement) => achievement.earned).length
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">Learning Progress</h1>
-        <p className="text-muted-foreground">Track your learning journey and achievements</p>
+    <div className="space-y-8 animate-fade-in">
+      <div className="text-center lg:text-left">
+        <h1 className="text-4xl font-bold text-foreground mb-2">Learning Progress</h1>
+        <p className="text-lg text-muted-foreground">Track your learning journey and achievements</p>
       </div>
 
       {/* Overview Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="hover-lift animate-slide-up" style={{ animationDelay: '0.1s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Study Time</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
+              <Clock className="h-4 w-4 text-blue-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{Math.round(totalHours)}h</div>
-            <p className="text-xs text-muted-foreground">+2.5h from last week</p>
+            <div className="text-3xl font-bold text-blue-500">{Math.round(totalHours)}h</div>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <span className="text-green-500">+2.5h</span>
+              from last week
+            </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-lift animate-slide-up" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Courses Completed</CardTitle>
-            <BookOpen className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-lg">
+              <BookOpen className="h-4 w-4 text-green-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{completedCourses}</div>
-            <p className="text-xs text-muted-foreground">+1 from last month</p>
+            <div className="text-3xl font-bold text-green-500">{completedCourses}</div>
+            <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <span className="text-green-500">+1</span>
+              from last month
+            </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-lift animate-slide-up" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Active Courses</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/20 rounded-lg">
+              <Target className="h-4 w-4 text-orange-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{inProgressCourses}</div>
-            <p className="text-xs text-muted-foreground">Currently learning</p>
+            <div className="text-3xl font-bold text-orange-500">{inProgressCourses}</div>
+            <p className="text-sm text-muted-foreground">Currently learning</p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="hover-lift animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Achievements</CardTitle>
-            <Trophy className="h-4 w-4 text-muted-foreground" />
+            <div className="p-2 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg">
+              <Trophy className="h-4 w-4 text-yellow-500" />
+            </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{earnedAchievements}</div>
-            <p className="text-xs text-muted-foreground">Out of {achievements.length} total</p>
+            <div className="text-3xl font-bold text-yellow-500">{earnedAchievements}</div>
+            <p className="text-sm text-muted-foreground">Out of {achievements.length} total</p>
           </CardContent>
         </Card>
       </div>

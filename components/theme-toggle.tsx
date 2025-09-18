@@ -14,6 +14,19 @@ export function ThemeToggle() {
 
   const current = theme === "system" ? systemTheme : theme
 
+  if (!mounted) {
+    return (
+      <Button
+        variant="outline"
+        size="icon"
+        className="shrink-0 bg-transparent"
+        disabled
+      >
+        <Sun className="h-5 w-5" />
+      </Button>
+    )
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,21 +35,34 @@ export function ThemeToggle() {
           size="icon"
           aria-label="Toggle theme"
           title="Theme"
-          className="shrink-0 bg-transparent"
+          className="shrink-0 bg-transparent hover:bg-accent/50 transition-colors"
         >
-          {mounted && current === "dark" ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+          {current === "dark" ? (
+            <Moon className="h-5 w-5 text-foreground" />
+          ) : (
+            <Sun className="h-5 w-5 text-foreground" />
+          )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuItem 
+          onClick={() => setTheme("light")}
+          className="cursor-pointer"
+        >
           <Sun className="mr-2 h-4 w-4" />
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem 
+          onClick={() => setTheme("dark")}
+          className="cursor-pointer"
+        >
           <Moon className="mr-2 h-4 w-4" />
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem 
+          onClick={() => setTheme("system")}
+          className="cursor-pointer"
+        >
           <Laptop className="mr-2 h-4 w-4" />
           System
         </DropdownMenuItem>

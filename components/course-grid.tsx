@@ -2,7 +2,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { 
+  Play, 
+  Clock, 
+  Star, 
+  Users, 
+  BookOpen, 
+  ChevronRight,
+  Award,
+  MoreHorizontal
+} from "lucide-react"
 import Link from "next/link"
+import { useLocalStorage } from "@/hooks/use-local-storage"
+import { Heart } from "lucide-react"
 
 const courses = [
   {
@@ -14,6 +26,9 @@ const courses = [
     instructor: "Sarah Johnson",
     duration: "8 hours",
     level: "Beginner",
+    rating: 4.8,
+    students: 1250,
+    lessons: 24,
   },
   {
     id: 2,
@@ -24,6 +39,9 @@ const courses = [
     instructor: "Mike Chen",
     duration: "12 hours",
     level: "Advanced",
+    rating: 4.9,
+    students: 980,
+    lessons: 36,
   },
   {
     id: 3,
@@ -34,6 +52,9 @@ const courses = [
     instructor: "Emily Davis",
     duration: "6 hours",
     level: "Intermediate",
+    rating: 4.7,
+    students: 2100,
+    lessons: 18,
   },
   {
     id: 4,
@@ -44,47 +65,119 @@ const courses = [
     instructor: "Alex Rodriguez",
     duration: "10 hours",
     level: "Intermediate",
+    rating: 4.6,
+    students: 750,
+    lessons: 30,
   },
 ]
 
 export function CourseGrid() {
+  const [wishlist, setWishlist] = useLocalStorage<number[]>("wishlist", [])
+  const toggleWish = (id: number) => {
+    setWishlist((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  }
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-foreground">My Courses</h2>
+    <div className="animate-fade-in">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h2 className="text-3xl font-bold text-foreground">My Courses</h2>
+          <p className="text-muted-foreground mt-1">Continue your learning journey</p>
+        </div>
         <Link href="/browse">
-          <Button variant="outline">Browse All Courses</Button>
+          <Button variant="outline" className="hover:bg-primary/10 hover:border-primary/20">
+            Browse All Courses
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
         </Link>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {courses.map((course) => (
-          <Card key={course.id} className="overflow-hidden">
-            <div className="aspect-video relative">
-              <img src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
-            </div>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <Badge variant="secondary">{course.level}</Badge>
-                <span className="text-sm text-muted-foreground">{course.duration}</span>
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {courses.map((course, index) => (
+          <Card 
+            key={course.id} 
+            className="group overflow-hidden hover-lift animate-slide-up"
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            <div className="aspect-video relative overflow-hidden">
+              <img 
+                src={course.image || "/placeholder.svg"} 
+                alt={course.title} 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute top-3 left-3">
+                <Badge variant="secondary" className="bg-white/90 text-foreground font-medium">
+                  {course.level}
+                </Badge>
               </div>
-              <CardTitle className="text-lg">{course.title}</CardTitle>
-              <CardDescription>{course.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between text-sm mb-2">
-                    <span>Progress</span>
-                    <span>{course.progress}%</span>
-                  </div>
-                  <Progress value={course.progress} />
+              <div className="absolute top-3 right-3 flex gap-2">
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30" onClick={() => toggleWish(course.id)} aria-label="Toggle wishlist">
+                  <Heart className={"h-4 w-4 " + (wishlist.includes(course.id) ? "fill-red-500 text-red-500" : "text-white")} />
+                </Button>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 bg-white/20 hover:bg-white/30">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button className="w-full bg-white/90 text-foreground hover:bg-white">
+                  <Play className="h-4 w-4 mr-2" />
+                  {course.progress === 0 ? "Start Course" : course.progress === 100 ? "Review" : "Continue"}
+                </Button>
+              </div>
+            </div>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1">
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  <span className="text-sm font-medium">{course.rating}</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">by {course.instructor}</span>
+                <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                  <Clock className="h-3 w-3" />
+                  <span>{course.duration}</span>
+                </div>
+              </div>
+              <CardTitle className="text-lg group-hover:text-primary transition-colors">
+                {course.title}
+              </CardTitle>
+              <CardDescription className="line-clamp-2">{course.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <Users className="h-3 w-3" />
+                      <span>{course.students.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BookOpen className="h-3 w-3" />
+                      <span>{course.lessons} lessons</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {course.progress > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between text-sm mb-2">
+                      <span className="font-medium">Progress</span>
+                      <span className="text-primary font-semibold">{course.progress}%</span>
+                    </div>
+                    <Progress value={course.progress} className="h-2" />
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between pt-2">
+                  <div className="text-sm text-muted-foreground">
+                    by <span className="font-medium text-foreground">{course.instructor}</span>
+                  </div>
                   <Link href={`/course/${course.id}`}>
-                    <Button size="sm">
+                    <Button 
+                      size="sm" 
+                      className="bg-gradient-primary hover:opacity-90"
+                    >
                       {course.progress === 0 ? "Start" : course.progress === 100 ? "Review" : "Continue"}
+                      <ChevronRight className="ml-1 h-3 w-3" />
                     </Button>
                   </Link>
                 </div>
