@@ -81,8 +81,7 @@ export default function HomePage() {
             </Badge>
             
             <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl animate-slide-up">
-              Master New Skills with
-              <span className="bg-gradient-primary bg-clip-text text-transparent"> Expert-Led Courses</span>
+              Master New Skills with Expert-Led Courses
             </h1>
             
             <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto animate-slide-up">
