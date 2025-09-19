@@ -21,7 +21,7 @@ const courseData = {
         id: 1,
         title: "What is React?",
         duration: "12 min",
-        type: "video",
+        type: "video" as const,
         completed: true,
         description: "Introduction to React and its core concepts",
       },
@@ -29,7 +29,7 @@ const courseData = {
         id: 2,
         title: "Setting up Your Development Environment",
         duration: "15 min",
-        type: "video",
+        type: "video" as const,
         completed: true,
         description: "Install Node.js, npm, and create your first React app",
       },
@@ -37,7 +37,7 @@ const courseData = {
         id: 3,
         title: "Understanding JSX",
         duration: "18 min",
-        type: "video",
+        type: "video" as const,
         completed: true,
         description: "Learn JSX syntax and how to write React components",
       },
@@ -45,7 +45,7 @@ const courseData = {
         id: 4,
         title: "Components and Props",
         duration: "22 min",
-        type: "video",
+        type: "video" as const,
         completed: false,
         description: "Create reusable components and pass data with props",
       },
@@ -53,7 +53,7 @@ const courseData = {
         id: 5,
         title: "State and Event Handling",
         duration: "25 min",
-        type: "video",
+        type: "video" as const,
         completed: false,
         description: "Manage component state and handle user interactions",
       },
@@ -61,16 +61,100 @@ const courseData = {
         id: 6,
         title: "Practice Exercise: Todo App",
         duration: "30 min",
-        type: "exercise",
+        type: "exercise" as const,
         completed: false,
         description: "Build a simple todo application using React",
       },
     ],
   },
+  2: {
+    id: 2,
+    title: "Advanced JavaScript",
+    description: "Master advanced JavaScript concepts, patterns, and modern ES6+ features",
+    image: "/javascript-course-thumbnail.png",
+    instructor: "Mike Chen",
+    duration: "18 hours",
+    level: "Advanced",
+    rating: 4.9,
+    students: 890,
+    enrolled: true,
+    progress: 30,
+    lessons: [
+      {
+        id: 101,
+        title: "ES6+ Features and Modern Syntax",
+        duration: "25 min",
+        type: "video" as const,
+        completed: true,
+        description: "Explore arrow functions, destructuring, template literals, and more",
+      },
+      {
+        id: 102,
+        title: "Advanced Functions and Closures",
+        duration: "30 min",
+        type: "video" as const,
+        completed: true,
+        description: "Deep dive into closures, higher-order functions, and functional programming",
+      },
+      {
+        id: 103,
+        title: "Asynchronous JavaScript Mastery",
+        duration: "35 min",
+        type: "video" as const,
+        completed: false,
+        description: "Master promises, async/await, and advanced asynchronous patterns",
+      },
+      {
+        id: 104,
+        title: "Object-Oriented JavaScript and Prototypes",
+        duration: "28 min",
+        type: "video" as const,
+        completed: false,
+        description: "Understand prototypal inheritance, classes, and object creation patterns",
+      },
+      {
+        id: 105,
+        title: "Advanced Array and Object Methods",
+        duration: "22 min",
+        type: "video" as const,
+        completed: false,
+        description: "Master map, reduce, filter, and advanced data manipulation techniques",
+      },
+      {
+        id: 106,
+        title: "JavaScript Modules and Module Patterns",
+        duration: "26 min",
+        type: "video" as const,
+        completed: false,
+        description: "Learn ES6 modules, CommonJS, and modern bundling strategies",
+      },
+      {
+        id: 107,
+        title: "Performance Optimization and Best Practices",
+        duration: "24 min",
+        type: "video" as const,
+        completed: false,
+        description: "Optimize JavaScript performance and follow industry best practices",
+      },
+      {
+        id: 108,
+        title: "Practice Project: Advanced Todo Manager",
+        duration: "45 min",
+        type: "exercise" as const,
+        completed: false,
+        description: "Build a complex todo application using advanced JavaScript patterns",
+      },
+    ],
+  },
 }
 
-export default function CoursePage({ params }: { params: { id: string } }) {
-  const course = courseData[Number.parseInt(params.id) as keyof typeof courseData]
+export default async function CoursePage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
+  const course = courseData[Number.parseInt(id) as keyof typeof courseData]
 
   if (!course) {
     return <div>Course not found</div>

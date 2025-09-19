@@ -86,7 +86,7 @@ export function LessonViewer({ lesson }: { lesson: Lesson }) {
                 </div>
               )}
 
-              <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+              <div className="lesson-content prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />
 
               {!isCompleted && (
                 <div className="mt-6 pt-6 border-t border-border">
