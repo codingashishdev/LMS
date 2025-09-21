@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { useToast } from "@/hooks/use-toast"
+import { useAuthRedirect } from "@/hooks/use-auth-redirect"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -29,10 +30,26 @@ const defaults: Settings = {
 }
 
 export default function SettingsPage() {
+  const { user, loading: authLoading } = useAuthRedirect()
   const [settings, setSettings] = useLocalStorage<Settings>("lms:settings", defaults)
   const { theme, setTheme } = useTheme()
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // User will be redirected by useAuthRedirect
+  }
 
   function toggle<K extends keyof Settings>(key: K) {
     setSettings({ ...settings, [key]: !settings[key] })

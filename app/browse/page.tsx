@@ -1,12 +1,32 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { CourseGrid } from "@/components/course-grid"
+import Image from "next/image"
+import dynamic from "next/dynamic"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAuthRedirect } from "@/hooks/use-auth-redirect"
+
+// Lazy load the course grid component
+const CourseGrid = dynamic(
+  () => import("@/components/course-grid").then(mod => ({ default: mod.CourseGrid })),
+  {
+    loading: () => <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="space-y-3">
+          <Skeleton className="w-full aspect-video" />
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-3 w-2/3" />
+          <Skeleton className="h-3 w-1/2" />
+        </div>
+      ))}
+    </div>,
+    ssr: false
+  }
+)
 import { 
   Search, 
   Filter, 
@@ -88,6 +108,7 @@ const featuredCourses = [
 ]
 
 export default function BrowsePage() {
+  const { user, loading: authLoading } = useAuthRedirect()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [selectedLevel, setSelectedLevel] = useState("All")
@@ -101,6 +122,21 @@ export default function BrowsePage() {
     const t = setTimeout(() => setLoading(false), 600)
     return () => clearTimeout(t)
   }, [])
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // User will be redirected by useAuthRedirect
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,10 +279,13 @@ export default function BrowsePage() {
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="aspect-video relative overflow-hidden">
-                  <img 
+                  <Image 
                     src={course.image} 
                     alt={course.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    priority={index === 0}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                   <div className="absolute top-3 left-3">

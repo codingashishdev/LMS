@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
+import { useAuth } from "@/contexts/auth-context"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -52,7 +53,9 @@ function passwordStrength(pw: string) {
 
 export function AuthForm() {
   const router = useRouter()
+  const { signIn, signUp, isSigningIn } = useAuth()
   const [tab, setTab] = useState<"signin" | "signup">("signin")
+  const [error, setError] = useState<string | null>(null)
 
   const [capsSignIn, setCapsSignIn] = useState(false)
   const [capsSignUp, setCapsSignUp] = useState(false)
@@ -71,8 +74,13 @@ export function AuthForm() {
   })
 
   const onSubmitSignIn = async (values: SignInValues) => {
-    await new Promise((r) => setTimeout(r, 800))
-    router.push("/dashboard")
+    setError(null)
+    const { error } = await signIn(values.email, values.password)
+    if (error) {
+      setError(error.message || 'Sign in failed')
+    } else {
+      router.push("/dashboard")
+    }
   }
 
   const signUpForm = useForm<SignUpValues>({
@@ -98,12 +106,17 @@ export function AuthForm() {
       return
     }
     if (!values.terms) {
-      signUpForm.setError("terms", { message: "You must accept the Terms & Privacy Policy" })
+      signUpForm.setError("terms", { message: "You must accept the terms" })
       return
     }
 
-    await new Promise((r) => setTimeout(r, 1000))
-    router.push("/dashboard")
+    setError(null)
+    const { error } = await signUp(values.email, values.password, values.name)
+    if (error) {
+      setError(error.message || 'Sign up failed')
+    } else {
+      router.push("/dashboard")
+    }
   }
 
   const signInEmail = signInForm.watch("email")
@@ -166,6 +179,12 @@ export function AuthForm() {
         <TabsTrigger value="signin">Sign In</TabsTrigger>
         <TabsTrigger value="signup">Sign Up</TabsTrigger>
       </TabsList>
+
+      {error && (
+        <div className="bg-destructive/15 border border-destructive/20 text-destructive px-4 py-3 rounded-md text-sm">
+          {error}
+        </div>
+      )}
 
       <TabsContent value="signin" className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -316,8 +335,8 @@ export function AuthForm() {
                   </ul>
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Sign In
+                <Button type="submit" className="w-full" disabled={isSigningIn}>
+                  {isSigningIn ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </Form>
@@ -585,8 +604,8 @@ export function AuthForm() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
-                  Create Account
+                <Button type="submit" className="w-full" disabled={isSigningIn}>
+                  {isSigningIn ? "Creating Account..." : "Create Account"}
                 </Button>
 
                 <div className="text-xs text-muted-foreground">

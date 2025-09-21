@@ -1,3 +1,5 @@
+import React from "react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -71,7 +73,7 @@ const courses = [
   },
 ]
 
-export function CourseGrid() {
+export const CourseGrid = React.memo(function CourseGrid() {
   const [wishlist, setWishlist] = useLocalStorage<number[]>("wishlist", [])
   const toggleWish = (id: number) => {
     setWishlist((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
@@ -100,10 +102,13 @@ export function CourseGrid() {
             style={{ animationDelay: `${index * 0.1}s` }}
           >
             <div className="aspect-video relative overflow-hidden">
-              <img 
+              <Image 
                 src={course.image || "/placeholder.svg"} 
                 alt={course.title} 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="absolute top-3 left-3">
@@ -188,4 +193,4 @@ export function CourseGrid() {
       </div>
     </div>
   )
-}
+})

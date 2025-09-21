@@ -1,0 +1,232 @@
+/* Prism.js Theme with light/dark support via CSS variables */
+
+:root {
+  --code-bg: #0b1020; /* dark slate by default; overridden in light */
+  --code-header-bg: #0e1426;
+  --code-border: #1f2a44;
+  --code-foreground: #e6edf3;
+  --code-linenumber-bg: #0f162e;
+  --code-linenumber-fg: #8b98b6;
+}
+
+.dark {
+  --code-bg: #0b1020;
+  --code-header-bg: #0e1426;
+  --code-border: #1f2a44;
+  --code-foreground: #e6edf3;
+  --code-linenumber-bg: #0f162e;
+  --code-linenumber-fg: #8b98b6;
+}
+
+/* Light mode override */
+:root:not(.dark) {
+  --code-bg: #fbfdff;
+  --code-header-bg: #f2f6fb;
+  --code-border: #d9e2ef;
+  --code-foreground: #0b1220;
+  --code-linenumber-bg: #eef3f9;
+  --code-linenumber-fg: #6b7280;
+}
+
+/* Base styles */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.token.punctuation { color: var(--code-foreground); }
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #ef4444; /* red */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #16a34a; /* green */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #2563eb; /* blue */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #7c3aed; /* violet */
+}
+
+.token.function,
+.token.class-name {
+  color: #d97706; /* amber */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #db2777; /* pink */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+/* Ensure tokens never carry a white background from user-agent or third-party styles */
+code[class*="language-"], pre[class*="language-"] {
+  background: transparent !important;
+}
+
+pre[class*="language-"] {
+  background-color: var(--code-bg) !important;
+}
+
+code[class*="language-"] .token,
+pre[class*="language-"] .token {
+  background: transparent !important;
+}
+
+.token.punctuation, .token.operator {
+  background: transparent !important;
+}
+
+/* JavaScript specific */
+.language-javascript .token.keyword,
+.language-js .token.keyword {
+  color: #7c3aed;
+}
+
+.language-javascript .token.function,
+.language-js .token.function {
+  color: #d97706;
+}
+
+.language-javascript .token.string,
+.language-js .token.string {
+  color: #16a34a;
+}
+
+.language-javascript .token.number,
+.language-js .token.number {
+  color: #ef4444;
+}
+
+/* TypeScript specific */
+.language-typescript .token.keyword,
+.language-ts .token.keyword {
+  color: #2563eb;
+}
+
+.language-typescript .token.type-annotation,
+.language-ts .token.type-annotation {
+  color: #7c3aed;
+}
+
+/* React JSX specific */
+.language-jsx .token.tag .token.tag,
+.language-tsx .token.tag .token.tag {
+  color: #2563eb;
+}
+
+.language-jsx .token.tag .token.attr-name,
+.language-tsx .token.tag .token.attr-name {
+  color: #d97706;
+}
+
+.language-jsx .token.tag .token.attr-value,
+.language-tsx .token.tag .token.attr-value {
+  color: #16a34a;
+}
+
+/* CSS specific */
+.language-css .token.selector { color: #2563eb; }
+
+.language-css .token.property { color: #16a34a; }
+
+.language-css .token.function { color: #d97706; }
+
+/* HTML specific */
+.language-html .token.tag .token.tag { color: #ef4444; }
+
+.language-html .token.tag .token.attr-name { color: #d97706; }
+
+.language-html .token.tag .token.attr-value { color: #16a34a; }
+
+/* JSON specific */
+.language-json .token.property { color: #2563eb; }
+
+.language-json .token.string { color: #16a34a; }
+
+.language-json .token.number { color: #ef4444; }
+
+.language-json .token.boolean { color: #7c3aed; }
+
+/* Python specific */
+.language-python .token.keyword { color: #7c3aed; }
+
+.language-python .token.function { color: #d97706; }
+
+.language-python .token.decorator { color: #db2777; }
+
+/* Bash/Shell specific */
+.language-bash .token.shebang,
+.language-shell .token.shebang {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.language-bash .token.command,
+.language-shell .token.command {
+  color: #2563eb;
+}
+
+.language-bash .token.parameter,
+.language-shell .token.parameter {
+  color: #d97706;
+}
+
+/* SQL specific */
+.language-sql .token.keyword {
+  color: #a78bfa;
+  text-transform: uppercase;
+}
+
+.language-sql .token.function { color: #d97706; }
+
+/* Highlighted lines */
+.line-highlight {
+  background: rgba(59, 130, 246, 0.1);
+  border-left: 3px solid #3b82f6;
+}
+
+/* Selection */
+.token.token.tab:not(:empty):before,
+.token.token.cr:before,
+.token.token.lf:before,
+.token.token.space:before {
+  color: #4b5563;
+}

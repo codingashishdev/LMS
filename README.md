@@ -28,3 +28,13 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## Command Palette
+
+The app includes a global command palette powered by `cmdk`:
+
+- Open with `Ctrl+K` (Windows/Linux) or `⌘+K` (macOS)
+- Quick open with `/` when not focused in an input field
+- Search for pages and actions, then hit `Enter` to navigate/execute
+
+The palette is mounted once globally in `app/layout.tsx` and can also be opened via the header buttons in both the marketing header and dashboard header.

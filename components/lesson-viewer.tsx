@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { CheckCircle, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { useEnhancedCodeBlocks } from "@/hooks/use-enhanced-code-blocks"
 
 interface Lesson {
   id: number
@@ -24,6 +25,10 @@ interface Lesson {
 export function LessonViewer({ lesson }: { lesson: Lesson }) {
   const [isCompleted, setIsCompleted] = useState(lesson.completed)
   const [watchProgress, setWatchProgress] = useState(lesson.completed ? 100 : 0)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  // Enhance code blocks in lesson content
+  useEnhancedCodeBlocks(contentRef)
 
   const handleMarkComplete = () => {
     setIsCompleted(true)
@@ -86,7 +91,11 @@ export function LessonViewer({ lesson }: { lesson: Lesson }) {
                 </div>
               )}
 
-              <div className="lesson-content prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: lesson.content }} />
+              <div 
+                ref={contentRef}
+                className="lesson-content prose prose-sm max-w-none" 
+                dangerouslySetInnerHTML={{ __html: lesson.content }} 
+              />
 
               {!isCompleted && (
                 <div className="mt-6 pt-6 border-t border-border">
@@ -106,7 +115,7 @@ export function LessonViewer({ lesson }: { lesson: Lesson }) {
               <CardTitle className="text-lg">Lesson Navigation</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {lesson.prevLesson && (
+              {lesson.prevLesson !== null && (
                 <Link href={`/course/${lesson.courseId}/lesson/${lesson.prevLesson}`}>
                   <Button variant="outline" className="w-full justify-start bg-transparent">
                     <ChevronLeft className="h-4 w-4 mr-2" />
@@ -115,7 +124,7 @@ export function LessonViewer({ lesson }: { lesson: Lesson }) {
                 </Link>
               )}
 
-              {lesson.nextLesson && (
+              {lesson.nextLesson !== null && (
                 <Link href={`/course/${lesson.courseId}/lesson/${lesson.nextLesson}`}>
                   <Button className="w-full justify-start" disabled={!isCompleted}>
                     Next Lesson

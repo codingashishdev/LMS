@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -221,11 +222,16 @@ export function InstructorDashboard() {
                         className="flex items-center justify-between p-4 border border-border rounded-lg"
                       >
                         <div className="flex items-center space-x-4">
-                          <img
-                            src={course.image || "/placeholder.svg"}
-                            alt={course.title}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
+                          <div className="relative w-12 h-12">
+                            <Image
+                              src={course.image || "/placeholder.svg"}
+                              alt={course.title}
+                              fill
+                              sizes="48px"
+                              className="rounded-lg object-cover"
+                              loading="lazy"
+                            />
+                          </div>
                           <div>
                             <h4 className="font-medium">{course.title}</h4>
                             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
@@ -350,10 +356,13 @@ export function InstructorDashboard() {
             {myCourses.map((course) => (
               <Card key={course.id} className="overflow-hidden">
                 <div className="aspect-video relative">
-                  <img
+                  <Image
                     src={course.image || "/placeholder.svg"}
                     alt={course.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover"
+                    loading="lazy"
                   />
                   <Badge
                     className="absolute top-2 right-2"

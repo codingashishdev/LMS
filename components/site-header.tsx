@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { CommandPalette } from "@/components/command-palette"
 import { NotificationsDrawer } from "@/components/notifications-drawer"
 import { useAuth } from "@/contexts/auth-context"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -37,7 +36,7 @@ const links = [
 
 export function SiteHeader() {
   const pathname = usePathname()
-  const { user, signOut } = useAuth()
+  const { user, signOut, isSigningOut } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -140,10 +139,11 @@ export function SiteHeader() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-red-600 focus:text-red-600"
-                  onSelect={() => signOut()}
+                  onClick={() => signOut()}
+                  disabled={isSigningOut}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  Sign out
+                  {isSigningOut ? "Signing out..." : "Sign out"}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -197,7 +197,16 @@ export function SiteHeader() {
             
             {/* Mobile Search */}
             <div className="pt-2 border-t">
-              <Button variant="outline" className="w-full justify-start gap-2">
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={() => {
+                  const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform)
+                  const event = new KeyboardEvent("keydown", { key: "k", ctrlKey: !isMac, metaKey: isMac })
+                  window.dispatchEvent(event)
+                  setIsMobileMenuOpen(false)
+                }}
+              >
                 <Search className="h-4 w-4" />
                 Search courses...
               </Button>
@@ -205,7 +214,6 @@ export function SiteHeader() {
           </div>
         </div>
       )}
-      <CommandPalette />
       <NotificationsDrawer open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen} />
     </header>
   )

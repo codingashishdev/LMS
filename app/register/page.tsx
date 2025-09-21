@@ -24,7 +24,7 @@ type RegisterValues = {
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { signUp, user, loading } = useAuth()
+  const { signUp, user, loading, isSigningIn } = useAuth()
   const { toast } = useToast()
   const [mounted, setMounted] = useState(false)
 
@@ -53,6 +53,7 @@ export default function RegisterPage() {
 
   async function onSubmit(values: RegisterValues) {
     if (values.password !== values.confirmPassword) {
+      form.setError('confirmPassword', { message: 'Passwords do not match' })
       toast({
         title: "Password mismatch",
         description: "Passwords do not match.",
@@ -62,6 +63,7 @@ export default function RegisterPage() {
     }
 
     if (!values.terms) {
+      form.setError('terms', { message: 'You must accept the terms' })
       toast({
         title: "Terms required",
         description: "Please accept the terms and conditions.",
@@ -73,15 +75,32 @@ export default function RegisterPage() {
     const { error } = await signUp(values.email, values.password, values.name)
     
     if (error) {
+      // Handle specific registration errors
+      let errorMessage = error.message
+      if (error.message.includes('User already registered')) {
+        errorMessage = "An account with this email already exists. Please sign in instead."
+        form.setError('email', { message: 'Email already registered' })
+      } else if (error.message.includes('Password should be at least')) {
+        errorMessage = "Password must be at least 6 characters long."
+        form.setError('password', { message: 'Password too short' })
+      } else if (error.message.includes('signup is disabled')) {
+        errorMessage = "New user registration is currently disabled. Please contact support."
+      } else if (error.message.includes('Unable to validate email address')) {
+        errorMessage = "Please enter a valid email address."
+        form.setError('email', { message: 'Invalid email format' })
+      } else {
+        errorMessage = "Registration failed. Please try again or contact support."
+      }
+
       toast({
         title: "Registration failed",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive"
       })
     } else {
       toast({
         title: "Account created!",
-        description: "Please check your email to verify your account."
+        description: "Registration successful! You can now sign in."
       })
       router.push("/login")
     }
@@ -286,8 +305,12 @@ export default function RegisterPage() {
                     )}
                   />
 
-                  <Button type="submit" className="w-full h-12 bg-gradient-primary hover:opacity-90 text-base font-semibold">
-                    Create Account
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-primary hover:opacity-90 text-base font-semibold"
+                    disabled={isSigningIn}
+                  >
+                    {isSigningIn ? "Creating Account..." : "Create Account"}
                   </Button>
                   
                   <div className="text-center text-sm">

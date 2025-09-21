@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -13,8 +14,26 @@ import {
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Command } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
 
-export function DashboardHeader() {
+export const DashboardHeader = React.memo(function DashboardHeader() {
+  const { user, signOut, isSigningOut, loading } = useAuth()
+  const [isClient, setIsClient] = useState(false)
+
+  // Fix hydration by ensuring client-side rendering
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
+
+  // Safe user data calculation - consistent between server and client
+  const userName = (isClient && user && !loading) ? (user.user_metadata?.name || user.email?.split('@')[0] || 'User') : 'User'
+  const userEmail = (isClient && user && !loading) ? (user.email || '') : ''
+  const userInitials = (isClient && user && !loading) ? (userName.split(' ').map((n: string) => n[0]).join('').toUpperCase() || 'U') : 'U'
+
   return (
     <header className="border-b border-border bg-card">
       <div className="container mx-auto px-4 py-4">
@@ -68,16 +87,22 @@ export function DashboardHeader() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src="/diverse-user-avatars.png" alt="User" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    {loading || !isClient ? (
+                      <AvatarFallback suppressHydrationWarning>U</AvatarFallback>
+                    ) : (
+                      <>
+                        <AvatarImage src={user?.user_metadata?.avatar_url} alt={userName} />
+                        <AvatarFallback suppressHydrationWarning>{userInitials}</AvatarFallback>
+                      </>
+                    )}
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">John Doe</p>
-                    <p className="text-xs leading-none text-muted-foreground">john@example.com</p>
+                    <p className="text-sm font-medium leading-none">{userName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{userEmail}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -88,7 +113,9 @@ export function DashboardHeader() {
                   <Link href="/settings">Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSignOut} disabled={isSigningOut}>
+                  {isSigningOut ? "Signing out..." : "Log out"}
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -96,4 +123,4 @@ export function DashboardHeader() {
       </div>
     </header>
   )
-}
+})

@@ -24,6 +24,7 @@ const courseData = {
         type: "video" as const,
         completed: true,
         description: "Introduction to React and its core concepts",
+        content: "React is a JavaScript library for building user interfaces. Learn the fundamental concepts of React and why it has become so popular for front-end development.",
       },
       {
         id: 2,
@@ -32,6 +33,7 @@ const courseData = {
         type: "video" as const,
         completed: true,
         description: "Install Node.js, npm, and create your first React app",
+        content: "Learn how to set up your development environment for React development including Node.js, npm, and Create React App.",
       },
       {
         id: 3,
@@ -40,6 +42,7 @@ const courseData = {
         type: "video" as const,
         completed: true,
         description: "Learn JSX syntax and how to write React components",
+        content: "JSX is a syntax extension for JavaScript that allows you to write HTML-like code within your JavaScript files.",
       },
       {
         id: 4,
@@ -48,6 +51,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Create reusable components and pass data with props",
+        content: "Learn how to create reusable components and pass data between components using props.",
       },
       {
         id: 5,
@@ -56,6 +60,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Manage component state and handle user interactions",
+        content: "Learn how to manage component state and handle user interactions in React applications.",
       },
       {
         id: 6,
@@ -64,6 +69,7 @@ const courseData = {
         type: "exercise" as const,
         completed: false,
         description: "Build a simple todo application using React",
+        content: "Apply what you've learned by building a simple todo application using React components, state, and event handling.",
       },
     ],
   },
@@ -87,6 +93,7 @@ const courseData = {
         type: "video" as const,
         completed: true,
         description: "Explore arrow functions, destructuring, template literals, and more",
+        content: "Learn modern JavaScript features including arrow functions, destructuring, template literals, and other ES6+ syntax improvements.",
       },
       {
         id: 102,
@@ -95,6 +102,7 @@ const courseData = {
         type: "video" as const,
         completed: true,
         description: "Deep dive into closures, higher-order functions, and functional programming",
+        content: "Explore advanced function concepts including closures, higher-order functions, and functional programming patterns in JavaScript.",
       },
       {
         id: 103,
@@ -103,6 +111,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Master promises, async/await, and advanced asynchronous patterns",
+        content: "Master asynchronous JavaScript with promises, async/await, and advanced patterns for handling asynchronous operations.",
       },
       {
         id: 104,
@@ -111,6 +120,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Understand prototypal inheritance, classes, and object creation patterns",
+        content: "Learn about JavaScript's prototypal inheritance, ES6 classes, and various object creation patterns.",
       },
       {
         id: 105,
@@ -119,6 +129,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Master map, reduce, filter, and advanced data manipulation techniques",
+        content: "Master advanced array methods like map, reduce, filter, and other powerful techniques for data manipulation in JavaScript.",
       },
       {
         id: 106,
@@ -127,6 +138,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Learn ES6 modules, CommonJS, and modern bundling strategies",
+        content: "Learn about JavaScript module systems including ES6 modules, CommonJS, and modern bundling strategies for organizing code.",
       },
       {
         id: 107,
@@ -135,6 +147,7 @@ const courseData = {
         type: "video" as const,
         completed: false,
         description: "Optimize JavaScript performance and follow industry best practices",
+        content: "Learn JavaScript performance optimization techniques and industry best practices for writing efficient, maintainable code.",
       },
       {
         id: 108,
@@ -143,6 +156,7 @@ const courseData = {
         type: "exercise" as const,
         completed: false,
         description: "Build a complex todo application using advanced JavaScript patterns",
+        content: "Apply advanced JavaScript concepts by building a sophisticated todo manager with modern patterns and best practices.",
       },
     ],
   },

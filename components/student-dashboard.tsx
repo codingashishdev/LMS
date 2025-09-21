@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -25,6 +26,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useAuth } from "@/contexts/auth-context"
 
 const recentActivity = [
   {
@@ -125,17 +127,27 @@ const continueWatching = [
   },
 ]
 
-export function StudentDashboard() {
+export const StudentDashboard = React.memo(function StudentDashboard() {
+  const { user, loading } = useAuth()
+  const [isClient, setIsClient] = useState(false)
+  
+  // Fix hydration by ensuring client-side rendering
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+  
   // In a real app, these would be fetched. Keeping simple synchronous data here.
   const isLoading = false
   const hasCourses = continueWatching.length > 0
+  const userName = (isClient && user && !loading) ? (user.user_metadata?.name || user.email?.split('@')[0] || 'Student') : 'Student'
+  
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Welcome Section */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold text-foreground">Welcome back, John!</h1>
+            <h1 className="text-3xl font-bold text-foreground">Welcome back, {userName}!</h1>
             <Badge variant="secondary" className="flex items-center gap-1 bg-gradient-primary text-primary-foreground">
               <Flame className="h-3 w-3" />
               <span>7-day streak</span>
@@ -268,6 +280,7 @@ export function StudentDashboard() {
                         height={80}
                         sizes="80px"
                         className="w-20 h-20 rounded-xl object-cover shadow-medium"
+                        style={{ width: 'auto', height: 'auto' }}
                       />
                       <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Play className="h-6 w-6 text-white" />
@@ -348,10 +361,10 @@ export function StudentDashboard() {
                       <Image
                         src={course.image || "/placeholder.jpg"}
                         alt={course.title}
-                        width={640}
-                        height={160}
+                        fill
                         sizes="(max-width: 768px) 100vw, 50vw"
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
                       />
                       <div className="absolute top-3 right-3">
                         <Badge variant="secondary" className="bg-white/90 text-foreground">
@@ -508,4 +521,4 @@ export function StudentDashboard() {
       </div>
     </div>
   )
-}
+})

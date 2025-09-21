@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,6 +13,7 @@ interface Lesson {
   type: "video" | "exercise" | "reading"
   completed: boolean
   description: string
+  content?: string
 }
 
 interface Course {
@@ -52,10 +54,13 @@ export function CourseDetail({ course }: { course: Course }) {
       <div className="lg:col-span-1">
         <Card>
           <div className="aspect-video relative">
-            <img
+            <Image
               src={course.image || "/placeholder.svg"}
               alt={course.title}
-              className="w-full h-full object-cover rounded-t-lg"
+              fill
+              sizes="(max-width: 768px) 100vw, 33vw"
+              className="object-cover rounded-t-lg"
+              loading="lazy"
             />
           </div>
           <CardHeader>

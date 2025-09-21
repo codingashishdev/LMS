@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { useToast } from "@/hooks/use-toast"
+import { useAuthRedirect } from "@/hooks/use-auth-redirect"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -32,9 +33,28 @@ const defaults: Profile = {
 }
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useLocalStorage<Profile>("lms:profile", defaults)
+  const { user, loading: authLoading } = useAuthRedirect()
+  const [profile, setProfile] = useLocalStorage<Profile>("lms:profile", {
+    ...defaults,
+    name: user?.user_metadata?.name || user?.email?.split('@')[0] || "",
+  })
   const [saving, setSaving] = useState(false)
   const { toast } = useToast()
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-lg text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return null // User will be redirected by useAuthRedirect
+  }
 
   function update<K extends keyof Profile>(key: K, val: Profile[K]) {
     setProfile({ ...profile, [key]: val })

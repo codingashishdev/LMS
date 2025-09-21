@@ -22,7 +22,7 @@ type LoginValues = {
 
 export default function LoginPage() {
   const router = useRouter()
-  const { signIn, user, loading } = useAuth()
+  const { signIn, user, loading, isSigningIn } = useAuth()
   const { toast } = useToast()
   const [mounted, setMounted] = useState(false)
 
@@ -55,14 +55,20 @@ export default function LoginPage() {
         name: error.name
       })
 
-      // Handle specific error cases
+      // Handle specific error cases with helpful messages
       let errorMessage = error.message
       if (error.message.includes('Email not confirmed')) {
-        errorMessage = "Please check your email and click the confirmation link, or disable email confirmation in your Supabase dashboard for development."
+        errorMessage = "Please check your email and click the confirmation link to verify your account."
       } else if (error.message.includes('Invalid login credentials')) {
-        errorMessage = "Invalid email or password. Please check your credentials."
+        errorMessage = "Invalid email or password. Please check your credentials and try again."
       } else if (error.message.includes('Email logins are disabled')) {
-        errorMessage = "Email authentication is disabled in Supabase. Please enable it in your Supabase dashboard under Authentication → Providers."
+        errorMessage = "Email authentication is currently disabled. Please contact support."
+      } else if (error.message.includes('signup is disabled')) {
+        errorMessage = "New user registration is currently disabled."
+      } else if (error.message.includes('Unable to validate email address')) {
+        errorMessage = "Please enter a valid email address."
+      } else {
+        errorMessage = "Login failed. Please try again or contact support if the problem persists."
       }
 
       toast({
@@ -70,12 +76,29 @@ export default function LoginPage() {
         description: errorMessage,
         variant: "destructive"
       })
+      
+      // Set form errors for better UX
+      if (error.message.includes('Invalid login credentials')) {
+        form.setError('email', { message: 'Invalid credentials' })
+        form.setError('password', { message: 'Invalid credentials' })
+      }
     } else {
       toast({
         title: "Welcome back!",
         description: "Login successful!",
       })
+      router.push("/dashboard")
     }
+  }
+
+  // Helper function to use demo credentials
+  function useDemoCredentials() {
+    form.setValue('email', 'demo@example.com')
+    form.setValue('password', 'demo123')
+    toast({
+      title: "Demo credentials loaded",
+      description: "You can now sign in with the demo account",
+    })
   }
 
   if (!mounted || loading) {
@@ -215,9 +238,28 @@ export default function LoginPage() {
                     />
                   </div>
 
-                  <Button type="submit" className="w-full h-12 bg-gradient-primary hover:opacity-90 text-base font-semibold">
-                    Sign In
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 bg-gradient-primary hover:opacity-90 text-base font-semibold"
+                    disabled={isSigningIn}
+                  >
+                    {isSigningIn ? "Signing in..." : "Sign In"}
                   </Button>
+
+                  <div className="text-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={useDemoCredentials}
+                      className="w-full"
+                      disabled={isSigningIn}
+                    >
+                      Use Demo Credentials
+                    </Button>
+                    <p className="text-xs text-muted-foreground mt-2">
+                      Email: demo@example.com | Password: demo123
+                    </p>
+                  </div>
                   
                   <div className="text-center text-sm">
                     New here?{" "}

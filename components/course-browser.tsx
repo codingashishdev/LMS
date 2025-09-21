@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -249,7 +250,14 @@ function CourseGrid({ courses }: { courses: typeof allCourses }) {
       {courses.map((course) => (
         <Card key={course.id} className="overflow-hidden hover:shadow-lg transition-shadow">
           <div className="aspect-video relative">
-            <img src={course.image || "/placeholder.svg"} alt={course.title} className="w-full h-full object-cover" />
+            <Image 
+              src={course.image || "/placeholder.svg"} 
+              alt={course.title} 
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+              loading="lazy"
+            />
             {course.enrolled && <Badge className="absolute top-2 right-2 bg-primary">Enrolled</Badge>}
           </div>
           <CardHeader>

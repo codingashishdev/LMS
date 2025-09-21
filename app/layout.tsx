@@ -9,6 +9,7 @@ import { HeaderRouter } from "@/components/header-router"
 import { AuthProvider } from "@/contexts/auth-context"
 import { Suspense } from "react"
 import { CommandPalette } from "@/components/command-palette"
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: "v0 App",
@@ -27,11 +28,13 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthProvider>
             <Suspense fallback={<div>Loading...</div>}>
+              {/* Mount the command palette before page content to prevent scroll jumps */}
+              <CommandPalette />
               <HeaderRouter />
               {children}
-              <CommandPalette />
             </Suspense>
           </AuthProvider>
+          <Toaster />
         </ThemeProvider>
         <Analytics />
       </body>
