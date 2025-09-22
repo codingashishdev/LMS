@@ -23,10 +23,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return // Prevent running on server
+
     // Check for existing demo session
     const existingSession = localStorage.getItem('demo-auth-session')
     if (existingSession) {
@@ -85,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     )
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [mounted])
 
   const signUp = useCallback(async (email: string, password: string, name?: string) => {
     setIsSigningIn(true)
@@ -123,12 +130,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           updated_at: new Date().toISOString()
         } as User
 
-        // Save demo session to localStorage
+        // Save demo session to localStorage (only on client)
         const demoSession = {
           user: demoUser,
           expires_at: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
         }
-        localStorage.setItem('demo-auth-session', JSON.stringify(demoSession))
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('demo-auth-session', JSON.stringify(demoSession))
+        }
         
         // Set user immediately for demo
         setUser(demoUser)
@@ -155,8 +164,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setIsSigningOut(true)
       
-      // Clear demo session if it exists
-      localStorage.removeItem('demo-auth-session')
+      // Clear demo session if it exists (only on client)
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('demo-auth-session')
+      }
       
       const { error } = await supabase.auth.signOut()
       if (error) throw error
