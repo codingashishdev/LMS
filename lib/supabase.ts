@@ -1,13 +1,91 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables')
+const missingSupabaseMessage = 'Missing Supabase environment variables. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your environment to enable live data.'
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
+
+const createMockPostgrestBuilder = () => {
+  const response = Promise.resolve({ data: null, error: new Error(missingSupabaseMessage) })
+  const builder: any = {
+    select: () => builder,
+    insert: () => builder,
+    update: () => builder,
+    delete: () => builder,
+    upsert: () => builder,
+    eq: () => builder,
+    order: () => builder,
+    limit: () => builder,
+    range: () => builder,
+    single: () => response,
+    maybeSingle: () => response,
+    returns: () => builder,
+    then: (onFulfilled: any, onRejected: any) => response.then(onFulfilled, onRejected),
+  }
+  return builder
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+const createMockSupabaseClient = (): SupabaseClient => {
+  console.warn(missingSupabaseMessage)
+  const mockError = new Error(missingSupabaseMessage)
+  return {
+    auth: {
+      async signUp() {
+        throw mockError
+      },
+      async signInWithPassword() {
+        return { data: null, error: mockError }
+      },
+      async signOut() {
+        return { error: null }
+      },
+      async getSession() {
+        return { data: { session: null }, error: mockError }
+      },
+      async getUser() {
+        return { data: { user: null }, error: mockError }
+      },
+      onAuthStateChange() {
+        return {
+          data: {
+            subscription: {
+              unsubscribe: () => {}
+            }
+          },
+          error: mockError
+        }
+      }
+    },
+    from() {
+      return createMockPostgrestBuilder()
+    }
+  } as unknown as SupabaseClient
+}
+
+export const supabase = (isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseAnonKey!, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      },
+      global: {
+        headers: {
+          'x-client': 'lms-app'
+        }
+      }
+    })
+  : createMockSupabaseClient()
+)
+
+if (!isSupabaseConfigured) {
+  console.warn('[Supabase] Running in mock mode – live database features are disabled until environment variables are set.')
+}
+
+export const supabaseClient = supabase
+
+export const supabaseOptions = {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -18,7 +96,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
       'x-client': 'lms-app'
     }
   }
-})
+}
 
 // Test connection
 export const testSupabaseConnection = async () => {

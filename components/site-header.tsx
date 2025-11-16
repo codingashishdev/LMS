@@ -24,6 +24,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
+import { useCommandPalette } from "@/contexts/command-palette-context"
+import { useNotificationsCenter } from "@/contexts/notifications-context"
 
 const links = [
   { href: "/", label: "Home", icon: BookOpen },
@@ -40,6 +42,10 @@ export function SiteHeader() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const { openPalette } = useCommandPalette()
+  const { unreadCount } = useNotificationsCenter()
+  const hasUnread = unreadCount > 0
+  const formattedUnread = unreadCount > 9 ? "9+" : unreadCount
 
   // Handle hydration
   useEffect(() => {
@@ -82,20 +88,27 @@ export function SiteHeader() {
         {/* Right Side Actions */}
         <div className="flex items-center gap-3">
           {/* Search Button */}
-          <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2" onClick={() => (window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true })), undefined)}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="hidden md:flex items-center gap-2"
+            onClick={() => openPalette("")}
+          >
             <Search className="h-4 w-4" />
             <span className="text-sm text-muted-foreground">Search courses...</span>
           </Button>
 
           {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative" onClick={() => setIsNotificationsOpen(true)}>
+          <Button variant="ghost" size="sm" className="relative" onClick={() => setIsNotificationsOpen(true)} aria-label="Notifications">
             <Bell className="h-4 w-4" />
-            <Badge 
-              variant="destructive" 
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              3
-            </Badge>
+            {hasUnread && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+              >
+                {formattedUnread}
+              </Badge>
+            )}
           </Button>
 
           {/* Theme Toggle */}
@@ -201,9 +214,7 @@ export function SiteHeader() {
                 variant="outline"
                 className="w-full justify-start gap-2"
                 onClick={() => {
-                  const isMac = typeof navigator !== "undefined" && /Mac|iPod|iPhone|iPad/.test(navigator.platform)
-                  const event = new KeyboardEvent("keydown", { key: "k", ctrlKey: !isMac, metaKey: isMac })
-                  window.dispatchEvent(event)
+                  openPalette("")
                   setIsMobileMenuOpen(false)
                 }}
               >

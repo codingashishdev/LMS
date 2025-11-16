@@ -1,4 +1,6 @@
 import { CourseDetail } from "@/components/course-detail"
+import { courses } from "@/lib/data/courses"
+import { notFound } from "next/navigation"
 // Header now handled globally by HeaderRouter
 // import { DashboardHeader } from "@/components/dashboard-header"
 
@@ -168,6 +170,55 @@ export default async function CoursePage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  
+  // First check if it's a course from our data file
+  const catalogCourse = courses.find((c) => c.id === Number.parseInt(id))
+  
+  if (catalogCourse) {
+    // Convert catalog course to detail format
+    const detailedCourse = {
+      id: catalogCourse.id,
+      title: catalogCourse.title,
+      description: catalogCourse.description,
+      image: catalogCourse.image,
+      instructor: catalogCourse.instructor,
+      duration: catalogCourse.duration,
+      level: catalogCourse.level,
+      rating: catalogCourse.rating,
+      students: catalogCourse.students,
+      enrolled: false, // TODO: Check enrollment status from auth
+      progress: 0,
+      lessons: [
+        {
+          id: 1,
+          title: `Introduction to ${catalogCourse.title}`,
+          duration: "15 min",
+          type: "video" as const,
+          completed: false,
+          description: `Get started with ${catalogCourse.title}`,
+          content: catalogCourse.description,
+        },
+      ] as Array<{
+        id: number
+        title: string
+        duration: string
+        type: "video" | "exercise"
+        completed: boolean
+        description: string
+        content: string
+      }>,
+    }
+    
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="container mx-auto px-4 py-8">
+          <CourseDetail course={detailedCourse} />
+        </main>
+      </div>
+    )
+  }
+  
+  // Fall back to hardcoded data for specific course IDs
   const course = courseData[Number.parseInt(id) as keyof typeof courseData]
 
   if (!course) {

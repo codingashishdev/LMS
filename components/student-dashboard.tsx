@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -27,6 +29,9 @@ import {
 import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
+import { NotificationsDrawer } from "@/components/notifications-drawer"
+import { useNotificationsCenter } from "@/contexts/notifications-context"
+import { useCommandPalette } from "@/contexts/command-palette-context"
 
 const recentActivity = [
   {
@@ -130,6 +135,9 @@ const continueWatching = [
 export const StudentDashboard = React.memo(function StudentDashboard() {
   const { user, loading } = useAuth()
   const [isClient, setIsClient] = useState(false)
+  const [isNotificationsDrawerOpen, setIsNotificationsDrawerOpen] = useState(false)
+  const { unreadCount } = useNotificationsCenter()
+  const { openPalette } = useCommandPalette()
   
   // Fix hydration by ensuring client-side rendering
   useEffect(() => {
@@ -140,6 +148,7 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
   const isLoading = false
   const hasCourses = continueWatching.length > 0
   const userName = (isClient && user && !loading) ? (user.user_metadata?.name || user.email?.split('@')[0] || 'Student') : 'Student'
+  const notificationLabel = unreadCount === 0 ? "Notifications" : `${unreadCount} notification${unreadCount === 1 ? "" : "s"}`
   
   return (
     <div className="space-y-8 animate-fade-in">
@@ -156,12 +165,18 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
           <p className="text-muted-foreground text-lg">Ready to continue your learning journey?</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            className="relative"
+            onClick={() => setIsNotificationsDrawerOpen(true)}
+            aria-label="View notifications"
+          >
             <Bell className="h-4 w-4 mr-2" />
-            3 notifications
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+            {notificationLabel}
+            {unreadCount > 0 && <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-destructive" aria-hidden="true" />}
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" onClick={() => openPalette("")}>
             <Search className="h-4 w-4 mr-2" />
             Search
           </Button>
@@ -519,6 +534,7 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
           </Card>
         </div>
       </div>
+      <NotificationsDrawer open={isNotificationsDrawerOpen} onOpenChange={setIsNotificationsDrawerOpen} />
     </div>
   )
 })
