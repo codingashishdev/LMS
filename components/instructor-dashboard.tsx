@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -18,8 +19,17 @@ import {
   MoreHorizontal,
   Star,
   MessageSquare,
+  CheckCircle,
+  XCircle,
+  Archive,
+  Trash2,
+  Globe,
+  Lock,
 } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { CreateCourseDialog } from "@/components/create-course-dialog"
+import { InstructorCoursesList } from "@/components/instructor-courses-list"
+import { useToast } from "@/hooks/use-toast"
 
 const enrollmentData = [
   { month: "Jan", students: 45 },
@@ -130,10 +140,54 @@ const topStudents = [
 ]
 
 export function InstructorDashboard() {
-  const totalStudents = myCourses.reduce((acc, course) => acc + course.students, 0)
-  const totalRevenue = myCourses.reduce((acc, course) => acc + course.revenue, 0)
-  const avgRating = myCourses.reduce((acc, course) => acc + course.rating, 0) / myCourses.length
-  const publishedCourses = myCourses.filter((course) => course.status === "Published").length
+  const { toast } = useToast()
+  const [courses, setCourses] = useState(myCourses)
+  
+  const totalStudents = courses.reduce((acc, course) => acc + course.students, 0)
+  const totalRevenue = courses.reduce((acc, course) => acc + course.revenue, 0)
+  const avgRating = courses.reduce((acc, course) => acc + course.rating, 0) / courses.length
+  const publishedCourses = courses.filter((course) => course.status === "Published").length
+
+  const handlePublish = (courseId: number) => {
+    setCourses(courses.map(course => 
+      course.id === courseId ? { ...course, status: "Published" } : course
+    ))
+    toast({
+      title: "Course Published",
+      description: "Your course is now live and visible to students.",
+    })
+  }
+
+  const handleUnpublish = (courseId: number) => {
+    setCourses(courses.map(course => 
+      course.id === courseId ? { ...course, status: "Draft" } : course
+    ))
+    toast({
+      title: "Course Unpublished",
+      description: "Your course is now hidden from students.",
+    })
+  }
+
+  const handleArchive = (courseId: number) => {
+    setCourses(courses.map(course => 
+      course.id === courseId ? { ...course, status: "Archived" } : course
+    ))
+    toast({
+      title: "Course Archived",
+      description: "Your course has been archived.",
+    })
+  }
+
+  const handleDelete = (courseId: number) => {
+    if (confirm("Are you sure you want to delete this course? This action cannot be undone.")) {
+      setCourses(courses.filter(course => course.id !== courseId))
+      toast({
+        title: "Course Deleted",
+        description: "Your course has been permanently deleted.",
+        variant: "destructive",
+      })
+    }
+  }
 
   return (
     <div className="space-y-8">
@@ -143,10 +197,7 @@ export function InstructorDashboard() {
           <h1 className="text-3xl font-bold text-foreground">Instructor Dashboard</h1>
           <p className="text-muted-foreground">Manage your courses and track student progress</p>
         </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          Create New Course
-        </Button>
+        <CreateCourseDialog />
       </div>
 
       {/* Overview Stats */}
@@ -169,7 +220,7 @@ export function InstructorDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-primary">{publishedCourses}</div>
-            <p className="text-xs text-muted-foreground">{myCourses.length - publishedCourses} in draft</p>
+            <p className="text-xs text-muted-foreground">{courses.length - publishedCourses} in draft</p>
           </CardContent>
         </Card>
 
@@ -216,7 +267,7 @@ export function InstructorDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {myCourses.slice(0, 3).map((course) => (
+                    {courses.slice(0, 3).map((course) => (
                       <div
                         key={course.id}
                         className="flex items-center justify-between p-4 border border-border rounded-lg"
@@ -242,7 +293,12 @@ export function InstructorDashboard() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Badge variant={course.status === "Published" ? "default" : "secondary"}>
+                          <Badge 
+                            variant={course.status === "Published" ? "default" : course.status === "Archived" ? "secondary" : "outline"}
+                            className={course.status === "Published" ? "bg-green-500" : ""}
+                          >
+                            {course.status === "Published" && <Globe className="h-3 w-3 mr-1" />}
+                            {course.status === "Draft" && <Lock className="h-3 w-3 mr-1" />}
                             {course.status}
                           </Badge>
                           <DropdownMenu>
@@ -251,18 +307,38 @@ export function InstructorDashboard() {
                                 <MoreHorizontal className="h-4 w-4" />
                               </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent>
+                            <DropdownMenuContent align="end">
                               <DropdownMenuItem>
-                                <Eye className="h-4 w-4 mr-2" />
-                                View Course
+                                <Eye className="mr-2 h-4 w-4" />
+                                View
                               </DropdownMenuItem>
                               <DropdownMenuItem>
-                                <Edit className="h-4 w-4 mr-2" />
-                                Edit Course
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
                               </DropdownMenuItem>
-                              <DropdownMenuItem>
-                                <TrendingUp className="h-4 w-4 mr-2" />
-                                View Analytics
+                              <DropdownMenuSeparator />
+                              {course.status === "Published" ? (
+                                <DropdownMenuItem onClick={() => handleUnpublish(course.id)}>
+                                  <XCircle className="mr-2 h-4 w-4" />
+                                  Unpublish
+                                </DropdownMenuItem>
+                              ) : (
+                                <DropdownMenuItem onClick={() => handlePublish(course.id)}>
+                                  <CheckCircle className="mr-2 h-4 w-4" />
+                                  Publish
+                                </DropdownMenuItem>
+                              )}
+                              <DropdownMenuItem onClick={() => handleArchive(course.id)}>
+                                <Archive className="mr-2 h-4 w-4" />
+                                Archive
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem 
+                                onClick={() => handleDelete(course.id)}
+                                className="text-destructive"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -346,65 +422,10 @@ export function InstructorDashboard() {
         <TabsContent value="courses" className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold">My Courses</h2>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Course
-            </Button>
+            <CreateCourseDialog />
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {myCourses.map((course) => (
-              <Card key={course.id} className="overflow-hidden">
-                <div className="aspect-video relative">
-                  <Image
-                    src={course.image || "/placeholder.svg"}
-                    alt={course.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover"
-                    loading="lazy"
-                  />
-                  <Badge
-                    className="absolute top-2 right-2"
-                    variant={course.status === "Published" ? "default" : "secondary"}
-                  >
-                    {course.status}
-                  </Badge>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-lg">{course.title}</CardTitle>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>{course.students} students</span>
-                    <span>⭐ {course.rating}</span>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-muted-foreground">Revenue</p>
-                        <p className="font-medium">${course.revenue.toLocaleString()}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Completion</p>
-                        <p className="font-medium">{course.completion}%</p>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" className="flex-1">
-                        <Eye className="h-4 w-4 mr-2" />
-                        View
-                      </Button>
-                      <Button size="sm" variant="outline" className="flex-1 bg-transparent">
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <InstructorCoursesList />
         </TabsContent>
 
         <TabsContent value="students" className="space-y-6">

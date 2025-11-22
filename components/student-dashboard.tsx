@@ -267,7 +267,7 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
                   <div className="grid gap-4">
                     {Array.from({ length: 2 }).map((_, i) => (
                       <div key={i} className="flex items-center gap-4">
-                        <div className="h-20 w-20 rounded-xl bg-muted animate-pulse" />
+                        <div className="h-24 w-24 rounded-xl bg-muted animate-pulse" />
                         <div className="flex-1 space-y-2">
                           <div className="h-4 w-1/3 rounded bg-muted animate-pulse" />
                           <div className="h-3 w-1/2 rounded bg-muted animate-pulse" />
@@ -279,50 +279,48 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
                   </div>
                 )}
                 {!isLoading && !hasCourses && (
-                  <div className="text-center py-6 text-muted-foreground">No courses in progress. Explore courses to get started!</div>
+                  <div className="text-center py-8 text-muted-foreground">
+                    <BookOpen className="h-12 w-12 mx-auto mb-3 text-muted-foreground/50" />
+                    <p className="font-medium">No courses in progress</p>
+                    <p className="text-sm mt-1">Explore courses to get started!</p>
+                  </div>
                 )}
                 {!isLoading && hasCourses && continueWatching.map((course, index) => (
                   <div 
                     key={course.id} 
-                    className="group flex items-center space-x-4 p-4 border border-border rounded-xl hover:bg-accent/50 transition-all duration-200 animate-slide-up"
+                    className="group flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border border-border rounded-xl hover:bg-accent/50 hover:border-primary/20 transition-all duration-200 animate-slide-up"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="relative">
-                      <Image
-                        src={course.image || "/placeholder.jpg"}
-                        alt={course.title}
-                        width={80}
-                        height={80}
-                        sizes="80px"
-                        className="w-20 h-20 rounded-xl object-cover shadow-medium"
-                        style={{ width: 'auto', height: 'auto' }}
-                      />
-                      <div className="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Play className="h-6 w-6 text-white" />
+                    <div className="relative flex-shrink-0">
+                      <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center shadow-medium overflow-hidden">
+                        <BookOpen className="h-10 w-10 text-primary/60" />
+                      </div>
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200">
+                        <Play className="h-8 w-8 text-white drop-shadow-lg" />
                       </div>
                     </div>
-                    <div className="flex-1 space-y-2">
+                    <div className="flex-1 space-y-3 w-full sm:w-auto min-w-0">
                       <div>
-                        <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                        <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                           {course.title}
                         </h4>
-                        <p className="text-sm text-muted-foreground">Next: {course.lesson}</p>
+                        <p className="text-sm text-muted-foreground mt-0.5 truncate">Next: {course.lesson}</p>
                       </div>
                       <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                          <span className="font-medium">{course.progress}% complete</span>
-                          <div className="flex items-center gap-1 text-muted-foreground">
-                            <Timer className="h-3 w-3" />
-                            <span>{course.timeLeft}</span>
+                          <span className="font-medium text-primary">{course.progress}% complete</span>
+                          <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span className="text-xs">{course.timeLeft}</span>
                           </div>
                         </div>
-                        <Progress value={course.progress} className="h-2" />
+                        <Progress value={course.progress} className="h-2.5" />
                       </div>
                     </div>
-                    <Link href={`/course/${course.id}`}>
-                      <Button size="sm" className="bg-gradient-primary hover:opacity-90">
+                    <Link href={`/course/${course.id}`} className="w-full sm:w-auto">
+                      <Button size="sm" className="bg-gradient-primary hover:opacity-90 shadow-medium hover:shadow-strong transition-all w-full sm:w-auto">
                         Continue
-                        <ChevronRight className="ml-1 h-3 w-3" />
+                        <ChevronRight className="ml-1 h-4 w-4" />
                       </Button>
                     </Link>
                   </div>
@@ -369,33 +367,26 @@ export const StudentDashboard = React.memo(function StudentDashboard() {
                 {!isLoading && recommendations.map((course, index) => (
                   <div 
                     key={course.id} 
-                    className="group border border-border rounded-xl overflow-hidden hover:shadow-strong transition-all duration-200 animate-slide-up"
+                    className="group border border-border rounded-xl overflow-hidden hover:shadow-strong hover:border-primary/20 transition-all duration-200 animate-slide-up"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
-                    <div className="relative">
-                      <Image
-                        src={course.image || "/placeholder.jpg"}
-                        alt={course.title}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        loading="lazy"
-                      />
+                    <div className="relative h-40 bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                      <BookOpen className="h-16 w-16 text-primary/40" />
                       <div className="absolute top-3 right-3">
-                        <Badge variant="secondary" className="bg-white/90 text-foreground">
+                        <Badge variant="secondary" className="bg-white dark:bg-card text-foreground shadow-medium">
                           {course.level}
                         </Badge>
                       </div>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <div className="p-5 space-y-3">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-1">
+                        <div className="flex items-center gap-1.5">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           <span className="text-sm font-medium">{course.rating}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <Clock className="h-3 w-3" />
+                        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                          <Clock className="h-3.5 w-3.5" />
                           <span>{course.duration}</span>
                         </div>
                       </div>

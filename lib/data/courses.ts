@@ -11,12 +11,20 @@ export type Course = {
   lessons: number
   image: string
   instructor: string
+  instructorId?: string
   price: number
   originalPrice: number
   tags: string[]
   language: string
   updatedAt: string
   featured?: boolean
+  isPublished?: boolean
+  prerequisites?: number[] // Course IDs that must be completed first
+  completionCertificate?: boolean
+  totalReviews?: number
+  averageCompletionTime?: string
+  skillLevel?: string[]
+  objectives?: string[]
 }
 
 export const courses: Course[] = [
@@ -37,8 +45,19 @@ export const courses: Course[] = [
     originalPrice: 189,
     tags: ["react", "frontend", "hooks"],
     language: "English",
-  updatedAt: "2024-11-01",
+    updatedAt: "2024-11-01",
     featured: true,
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 3250,
+    averageCompletionTime: "6 weeks",
+    skillLevel: ["JavaScript", "HTML", "CSS"],
+    objectives: [
+      "Build modern React applications from scratch",
+      "Master React Hooks and Context API",
+      "Implement state management patterns",
+      "Create reusable component libraries"
+    ]
   },
   {
     id: 102,
@@ -57,8 +76,18 @@ export const courses: Course[] = [
     originalPrice: 179,
     tags: ["javascript", "performance", "architecture"],
     language: "English",
-  updatedAt: "2024-10-15",
+    updatedAt: "2024-10-15",
     featured: true,
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 2840,
+    averageCompletionTime: "5 weeks",
+    objectives: [
+      "Master advanced JavaScript patterns",
+      "Optimize code performance",
+      "Design scalable architecture",
+      "Implement design patterns"
+    ]
   },
   {
     id: 103,
@@ -77,8 +106,18 @@ export const courses: Course[] = [
     originalPrice: 169,
     tags: ["design", "figma", "research"],
     language: "English",
-  updatedAt: "2024-09-10",
+    updatedAt: "2024-09-10",
     featured: true,
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 2130,
+    averageCompletionTime: "4 weeks",
+    objectives: [
+      "Conduct user research and testing",
+      "Create design systems",
+      "Master Figma and design tools",
+      "Build accessible interfaces"
+    ]
   },
   {
     id: 104,
@@ -97,7 +136,18 @@ export const courses: Course[] = [
     originalPrice: 189,
     tags: ["node", "api", "backend"],
     language: "English",
-  updatedAt: "2024-07-20",
+    updatedAt: "2024-07-20",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 1820,
+    averageCompletionTime: "5 weeks",
+    prerequisites: [101], // Requires Complete React Developer
+    objectives: [
+      "Build RESTful and GraphQL APIs",
+      "Implement authentication and authorization",
+      "Design database schemas",
+      "Deploy production-ready applications"
+    ]
   },
   {
     id: 105,
@@ -116,7 +166,17 @@ export const courses: Course[] = [
     originalPrice: 149,
     tags: ["python", "analytics", "ml"],
     language: "English",
-  updatedAt: "2024-12-05",
+    updatedAt: "2024-12-05",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 4120,
+    averageCompletionTime: "6 weeks",
+    objectives: [
+      "Master Python for data analysis",
+      "Work with pandas and NumPy",
+      "Create data visualizations",
+      "Build machine learning models"
+    ]
   },
   {
     id: 106,
@@ -135,7 +195,18 @@ export const courses: Course[] = [
     originalPrice: 219,
     tags: ["ml", "ai", "python"],
     language: "English",
-  updatedAt: "2025-01-18",
+    updatedAt: "2025-01-18",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 3080,
+    averageCompletionTime: "8 weeks",
+    prerequisites: [105], // Requires Python for Data Science
+    objectives: [
+      "Understand ML algorithms",
+      "Implement classification and regression",
+      "Evaluate model performance",
+      "Deploy ML models to production"
+    ]
   },
   {
     id: 107,
@@ -154,7 +225,17 @@ export const courses: Course[] = [
     originalPrice: 199,
     tags: ["devops", "kubernetes", "docker"],
     language: "English",
-  updatedAt: "2024-08-08",
+    updatedAt: "2024-08-08",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 2350,
+    averageCompletionTime: "7 weeks",
+    objectives: [
+      "Containerize applications with Docker",
+      "Orchestrate with Kubernetes",
+      "Implement CI/CD pipelines",
+      "Monitor and troubleshoot systems"
+    ]
   },
   {
     id: 108,
@@ -173,7 +254,17 @@ export const courses: Course[] = [
     originalPrice: 189,
     tags: ["security", "owasp", "threat-modeling"],
     language: "English",
-  updatedAt: "2024-06-12",
+    updatedAt: "2024-06-12",
+    isPublished: false, // Unpublished course - not accessible
+    completionCertificate: true,
+    totalReviews: 1520,
+    averageCompletionTime: "5 weeks",
+    objectives: [
+      "Identify security vulnerabilities",
+      "Implement secure coding practices",
+      "Protect against OWASP Top 10",
+      "Conduct security audits"
+    ]
   },
   {
     id: 109,
@@ -192,7 +283,17 @@ export const courses: Course[] = [
     originalPrice: 139,
     tags: ["flutter", "mobile", "firebase"],
     language: "English",
-  updatedAt: "2024-05-22",
+    updatedAt: "2024-05-22",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 1280,
+    averageCompletionTime: "5 weeks",
+    objectives: [
+      "Build cross-platform mobile apps",
+      "Master Flutter framework",
+      "Integrate Firebase services",
+      "Publish to app stores"
+    ]
   },
   {
     id: 110,
@@ -211,7 +312,17 @@ export const courses: Course[] = [
     originalPrice: 229,
     tags: ["cloud", "azure", "architecture"],
     language: "English",
-  updatedAt: "2025-02-02",
+    updatedAt: "2025-02-02",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 1840,
+    averageCompletionTime: "9 weeks",
+    objectives: [
+      "Design Azure cloud architectures",
+      "Implement security best practices",
+      "Optimize costs and performance",
+      "Prepare for Azure certification"
+    ]
   },
   {
     id: 111,
@@ -230,7 +341,18 @@ export const courses: Course[] = [
     originalPrice: 169,
     tags: ["d3", "visualization", "accessibility"],
     language: "English",
-  updatedAt: "2025-01-05",
+    updatedAt: "2025-01-05",
+    isPublished: false, // Unpublished course - not accessible
+    completionCertificate: false,
+    totalReviews: 920,
+    averageCompletionTime: "4 weeks",
+    prerequisites: [105], // Requires Python for Data Science
+    objectives: [
+      "Create interactive visualizations",
+      "Master D3.js library",
+      "Design accessible charts",
+      "Tell data stories effectively"
+    ]
   },
   {
     id: 112,
@@ -249,6 +371,16 @@ export const courses: Course[] = [
     originalPrice: 149,
     tags: ["product", "strategy", "ops"],
     language: "English",
-  updatedAt: "2024-09-28",
+    updatedAt: "2024-09-28",
+    isPublished: true,
+    completionCertificate: true,
+    totalReviews: 850,
+    averageCompletionTime: "3 weeks",
+    objectives: [
+      "Define product strategy",
+      "Conduct user research",
+      "Manage product roadmaps",
+      "Measure product success"
+    ]
   },
 ]

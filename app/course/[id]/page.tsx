@@ -1,6 +1,11 @@
 import { CourseDetail } from "@/components/course-detail"
 import { courses } from "@/lib/data/courses"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Lock, AlertCircle } from "lucide-react"
+import Link from "next/link"
 // Header now handled globally by HeaderRouter
 // import { DashboardHeader } from "@/components/dashboard-header"
 
@@ -173,6 +178,49 @@ export default async function CoursePage({
   
   // First check if it's a course from our data file
   const catalogCourse = courses.find((c) => c.id === Number.parseInt(id))
+  
+  // Check if course is published
+  if (catalogCourse && catalogCourse.isPublished === false) {
+    return (
+      <div className="min-h-screen bg-background">
+        <main className="container mx-auto px-4 py-16">
+          <Card className="max-w-2xl mx-auto border-destructive/50">
+            <CardHeader className="text-center">
+              <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+                <Lock className="h-8 w-8 text-destructive" />
+              </div>
+              <CardTitle className="text-2xl">Course Not Available</CardTitle>
+              <CardDescription className="text-base">
+                This course is currently unavailable or has been unpublished by the instructor.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="text-center space-y-4">
+              <div className="p-4 bg-muted rounded-lg">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div className="text-sm text-left">
+                    <p className="font-medium mb-1">Why can't I access this course?</p>
+                    <p className="text-muted-foreground">
+                      The instructor may be updating the course content, or this course may no longer be offered.
+                      Please check back later or browse our other available courses.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-3 justify-center pt-4">
+                <Button asChild variant="outline">
+                  <Link href="/browse">Browse Courses</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    )
+  }
   
   if (catalogCourse) {
     // Convert catalog course to detail format

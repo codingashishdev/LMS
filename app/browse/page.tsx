@@ -81,6 +81,9 @@ export default function BrowsePage() {
     const normalizedQuery = searchQuery.trim().toLowerCase()
 
     const filtered = courses.filter((course) => {
+      // Filter out unpublished courses
+      if (course.isPublished === false) return false
+      
       const matchesQuery =
         !normalizedQuery ||
         [course.title, course.description, course.instructor, course.tags.join(" ")]
